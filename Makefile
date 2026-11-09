@@ -1,7 +1,7 @@
 .PHONY: help setup chrome chromium firefox clean zip xpi crx
 
 # local stuff
-VERSION=v3.0.1.1
+VERSION=v3.1.0
 
 # used only by the crx target: the private key that determines CHROME_ID
 # (it must match the "key" in chrome/manifest.json) and the browser used to pack

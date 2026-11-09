@@ -30,11 +30,13 @@ const QUR = (function () {
         readyResolve = resolve;
     });
 
+    const action = browser.action || browser.browserAction;
+
     const _QUR = {
         ready,
         fatal (error) {
             console.error(error);
-            browser.browserAction.setIcon({path: "common/logo_disabled.png"});
+            action.setIcon({path: "common/logo_disabled.png"});
         }
     };
 
@@ -47,7 +49,7 @@ const QUR = (function () {
                 dep.splice(i, 1);
             }
             if (dep.length === 0) {
-                browser.browserAction.setIcon({path: "common/logo.png"});
+                action.setIcon({path: "common/logo.png"});
                 readyResolve(true);
             }
 

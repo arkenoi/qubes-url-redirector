@@ -23,6 +23,11 @@ QUR.messaging.addListener({
         "use strict";
 
         const {sendResponse, options:tabId} = details;
-        sendResponse(QUR.tabs.getBlockedRes(tabId));
+        Promise.resolve(QUR.tabs.getBlockedRes(tabId))
+            .then(sendResponse)
+            .catch(function (error) {
+                console.error(error);
+                sendResponse(null);
+            });
     }
 });

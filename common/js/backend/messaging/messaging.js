@@ -27,7 +27,8 @@ QUR.messaging = (function () {
         GET_WHITELIST: 3,
         RM_FROM_WHITELIST: 4,
         REPLACE_IN_WHITELIST: 5,
-        GET_BLOCKED_RES: 6
+        GET_BLOCKED_RES: 6,
+        FIREWALL_HIT: 7
     });
     /* single listener for each message */
     const listeners = [];
@@ -57,7 +58,8 @@ QUR.messaging = (function () {
         }
 
         const details = {sendResponse, sender, options};
-        window.setTimeout(() => handler(details), 0);
+        /* the background could have just been (re)started */
+        QUR.ready.then(() => handler(details));
         return true; /* async response */
     });
 

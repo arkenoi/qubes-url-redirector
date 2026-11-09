@@ -88,6 +88,7 @@ QUR.whitelist_entries = (function () {
             return Object.freeze({
                 getType: () => MY_TYPE,
                 test: (v) => reObj.test(v),
+                getRegexSource: () => regexp,
                 toString: () => reObj.toString(),
                 toJSON: () => json
             });
@@ -108,6 +109,7 @@ QUR.whitelist_entries = (function () {
             return Object.freeze({
                 getType: () => MY_TYPE,
                 test: (v) => reObj.test(v),
+                getRegexSource: () => "^" + that.escapeRE(exact) + "$",
                 toString: (detailed = false) => detailed ? reObj.toString() : simpleString,
                 toJSON: () => json
             });
@@ -152,6 +154,15 @@ QUR.whitelist_entries = (function () {
                 return schemePrefix + that.escapeRE(hostRepresentation) + portRepresentation + "(?![^/])" + pqfSuffix;
             }());
 
+            /* equivalent to reObj, but without the lookahead */
+            const regexSource = (function () {
+                const prefix = "^" + scheme + "://" + that.escapeRE(hostRepresentation) + portRepresentation;
+                if (pqf === "") {
+                    return prefix + "(?:/|$)";
+                }
+                return prefix + that.escapeRE(pqf) + (pqf.slice(-1) === "/" ? "" : "$");
+            }());
+
             const simpleString = scheme + "://" + hostRepresentation + portRepresentation + pqf;
 
             const nspec = _normalizeSpec(spec);
@@ -162,6 +173,7 @@ QUR.whitelist_entries = (function () {
             return Object.freeze({
                 getType: () => MY_TYPE,
                 test: (v) => reObj.test(v),
+                getRegexSource: () => regexSource,
                 toString: (detailed = false) => detailed ? reObj.toString() : simpleString,
                 toJSON: () => json
             });

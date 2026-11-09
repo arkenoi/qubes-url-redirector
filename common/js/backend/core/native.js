@@ -21,6 +21,8 @@ QUR.native = Object.freeze({
     openurl (details) {
         "use strict";
         const {vmname, url} = details;
-        browser.runtime.sendNativeMessage("qvm_open_in_vm", {vmname, url});
+        /* the native application doesn't reply, so the promise could be rejected */
+        Promise.resolve(browser.runtime.sendNativeMessage("qvm_open_in_vm", {vmname, url}))
+            .catch((error) => console.info("[QUR.native] " + String(error && error.message || error)));
     }
 });

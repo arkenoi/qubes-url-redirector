@@ -27,12 +27,43 @@
     const getCloned = () => _whitelist.slice(0);
     const persist = (whitelist) => browser.storage.local.set({"whitelist": JSON.parse(JSON.stringify(whitelist))});
 
+    const listeners = [];
+    const notify = () => setTimeout(() => listeners.forEach((l) => l()), 0);
+    const onChanged = Object.freeze({
+        addListener (listener) {
+            if (typeof listener === "function") {
+                listeners.push(listener);
+                return true;
+            }
+            return false;
+        }
+    });
+
+    /*
+     * Validators are functions that receive an entry and the entries that the
+     * list will contain. They return a promise resolved with true if the
+     * entry is acceptable.
+     */
+    const validators = [];
+    function isAccepted (entry, newList) {
+        return Promise.all(validators.map((v) => v(entry, newList)))
+            .then((results) => results.every((r) => r === true));
+    }
+
     const that = QUR.whitelist_entries;
     const publicWhitelist = Object.freeze({
         toString: () => _whitelist.toString(),
         toJSON: () => _whitelist.slice(0),
         forEach: (fn) => getCloned().forEach(fn),
         map: (fn) => getCloned().map(fn),
+        onChanged,
+        addValidator (validator) {
+            if (typeof validator === "function") {
+                validators.push(validator);
+                return true;
+            }
+            return false;
+        },
         isEmpty: () => _whitelist.length === 0,
         isWhitelisted: (value) => _whitelist.some((x) => x.test(value)),
         getMatchedEntry (value) {
@@ -54,9 +85,15 @@
 
             const cloned = getCloned();
             cloned.push(entry);
-            return persist(cloned).then(function () {
-                _whitelist.push(entry);
-                return Promise.resolve(true);
+            return isAccepted(entry, cloned).then(function (accepted) {
+                if (!accepted) {
+                    return false;
+                }
+                return persist(cloned).then(function () {
+                    _whitelist.push(entry);
+                    notify();
+                    return true;
+                });
             });
         },
         rm (entry) {
@@ -73,6 +110,7 @@
             cloned.splice(i, 1);
             return persist(cloned).then(function () {
                 _whitelist.splice(i, 1);
+                notify();
                 return Promise.resolve(true);
             });
         },
@@ -89,14 +127,21 @@
 
             const cloned = getCloned();
             cloned[i] = newEntry;
-            return persist(cloned).then(function () {
-                _whitelist[i] = newEntry;
-                return Promise.resolve(true);
+            return isAccepted(newEntry, cloned).then(function (accepted) {
+                if (!accepted) {
+                    return false;
+                }
+                return persist(cloned).then(function () {
+                    _whitelist[i] = newEntry;
+                    notify();
+                    return true;
+                });
             });
         },
         clear () {
             return persist([]).then(function () {
                 _whitelist = [];
+                notify();
                 return Promise.resolve(true);
             });
         }

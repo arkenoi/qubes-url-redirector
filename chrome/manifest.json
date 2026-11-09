@@ -1,66 +1,50 @@
 {
-    "manifest_version": 2,
-
+    "manifest_version": 3,
     "name": "Open in Qube",
-    "version": "3.0.1.1",
+    "version": "3.1.0",
     "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsQPLj062BiUHv7FAonfwlZHJFtE7Bxx7E25JJASFnA/DTy3DUQWxHzB8+s1hb0IaaYXms47Kmyf/ct+JFK2xYRRALHtQynxZ4FtHx1809nagTjL1neFmpxGBniao7VOLzGptGWMxHfrxRM3+mZrETivTJWzKqkVx9N7ELXDilpT4PSfXDl0sZcDENSP22fOkewYSgXXQhS1GzdkQtFXNSGLcw00eq2Zm8V90khqIalXPELkL/NkSK4Y9F0xCynE5e8G/pru/S2uOzbY/5mZrjt22oJU7ONnDZlA4sRVA2cjsIvCEe51i0uvBOhioahepJwAiRLwQCNmgvO6HAXqChwIDAQAB",
-
+    "minimum_chrome_version": "111",
     "description": "Redirect blacklisted URLs to another qube while you surf the web!",
-
     "icons": {
-	"16": "common/logo.png",
-	"32": "common/logo.png",
-	"48": "common/logo.png",
-	"64": "common/logo.png",
-	"128": "common/logo.png"
+        "16": "common/logo.png",
+        "32": "common/logo.png",
+        "48": "common/logo.png",
+        "64": "common/logo.png",
+        "128": "common/logo.png"
     },
-    
     "author": "Raffaele Florio",
     "homepage_url": "https://github.com/arkenoi/qubes-url-redirector",
-
     "options_ui": {
-	"page": "common/html/settings.html",
-	"chrome_style": true,
-	"open_in_tab": true
+        "page": "common/html/settings.html",
+        "open_in_tab": true
     },
-
-    "browser_action": {
-	"chrome_style": true,
+    "action": {
         "default_popup": "common/html/req_popup.html",
-	"default_title": "Blocked resources in this tab",
-	"default_icon": "common/logo_disabled.png"
+        "default_title": "Blocked resources in this tab",
+        "default_icon": "common/logo_disabled.png"
     },
-
     "background": {
-	"scripts": [
-	    "webextension-browser-proxy/polyfill.js",
-	    "common/js/backend/main.js",
-	    "common/js/backend/tabs.js",
-	    "common/js/backend/net_utils.js",
-
-	    "common/js/backend/core/settings.js",
-	    "common/js/backend/core/whitelist_entries.js",
-	    "common/js/backend/core/whitelist.js",
-	    "common/js/backend/core/native.js",
-
-	    "common/js/backend/messaging/messaging.js",
-	    "common/js/backend/messaging/settingsML.js",
-	    "common/js/backend/messaging/whitelistML.js",
-	    "common/js/backend/messaging/tabsML.js",
-
-	    "common/js/backend/req_handler.js",
-
-	    "common/js/backend/menu.js"
-	]
+        "service_worker": "sw.js"
     },
-    
     "permissions": [
-	"contextMenus",
-	"storage",
-	"nativeMessaging",
-	"webRequest",
-	"webRequestBlocking",
-	"tabs",
-	"<all_urls>"
-    ]    
+        "contextMenus",
+        "storage",
+        "nativeMessaging",
+        "declarativeNetRequest",
+        "webRequest",
+        "tabs"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "common/html/firewall.html"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
 }

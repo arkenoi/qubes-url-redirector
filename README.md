@@ -1,4 +1,4 @@
-# qubes-url-redirector v3.0.1.1
+# qubes-url-redirector v3.1.0
 This is a browser extension, aimed to improve surfing security. It's written for Qubes OS using standard WebExtension APIs and it allows you to manage which qube is responsible to open URLs. Obviously redirection happens before any TCP connection is opened. Furthermore, through context menu entries, you can open a specific link in a custom way.
 
 It has a settings page embedded in browser where you customize default behavior and it supports a URL list based on Javascript's RegExp, in this way there is a lot of flexibility to define which URLs are handled differently. Settings page is also accessible through the browser's toolbar button.
@@ -24,14 +24,8 @@ You can see more screenshots in the `common/screenshots` directory.
 After the beta there will be a signed rpm package. Now you need to follow these steps.
 
 ## Clone the repo
-
-If the target browser is Chrome/ium you need clone the repo with the `recursive` flag (because of the ([webextension-browser-proxy submodule](https://github.com/raffaeleflorio/webextension-browser-proxy)):
 ```
-$ git clone --recurse-submodules https://github.com/arkenoi/qubes-url-redirector.git
-```
-Otherwise you can clone the submodule separately with:
-```
-qubes-url-redirector/cloned/repo $ git submodule update --init --recursive
+$ git clone https://github.com/arkenoi/qubes-url-redirector.git
 ```
 
 ## Check the signatures (it's optional, but strongly recommended):
@@ -61,7 +55,7 @@ qubes-url-redirector/cloned/repo # make firefox
 The package built by `make xpi` is not signed by Mozilla. It's accepted by Firefox builds that allow unsigned add-ons in the system directories (e.g. the Fedora and Debian ones) or with `xpinstall.signatures.required` set to `false` (ESR, Developer Edition, Nightly). Otherwise load it from `about:debugging`.
 
 ## Chrome/ium package
-The `packages/chrome-*.crx` package is built with `make crx CRX_KEY=/path/to/key.pem`. The key determines the extension ID: with a different key you have to update `CHROME_ID` in the Makefile, the `key` in `chrome/manifest.json`, the name of `chrome/<id>.json` and the origin in `chrome/NativeMessagingHosts/qvm_open_in_vm.json`. Note that the extension uses Manifest V2.
+The `packages/chrome-*.crx` package is built with `make crx CRX_KEY=/path/to/key.pem`. The key determines the extension ID: with a different key you have to update `CHROME_ID` in the Makefile, the `key` in `chrome/manifest.json`, the name of `chrome/<id>.json` and the origin in `chrome/NativeMessagingHosts/qvm_open_in_vm.json`.
 
 ## Chrome installation
 `qubes-url-redirector/cloned/repo # make chrome`
@@ -75,17 +69,26 @@ That's all! :D
 If you encounter some problems, don't hesitate to contact me!
 
 # Supported browser
-- Firefox 52 onwards (according the API's reference).
-- Chromium 42 onwards (according the API's reference).
+- Firefox (Manifest V2, blocking `webRequest`).
+- Chrome/ium 111 onwards (Manifest V3, `declarativeNetRequest`).
+
+## Differences in Chrome/ium
+Manifest V3 doesn't allow an extension to inspect and block requests with its own code, so settings and URL list are translated into `declarativeNetRequest` rules (see `chrome/backend/dnr.js`). The redirection still happens before any connection is opened. Consequently:
+- RegExp entries have to be valid [RE2](https://github.com/google/re2/wiki/Syntax) expressions (no lookaheads or backreferences) with a limited complexity. An unsupported entry is refused when you add it.
+- The number of entries is limited by the browser (about 500).
+- Only `http`, `https`, `ws` and `wss` URLs are handled.
+- A blocked or redirected tab shows the extension page with the URL, as in Firefox, but it's the page that asks to open the URL in the other qube. Reloading it doesn't open the URL again.
+- "Open here" in the context menu permits the navigation to the clicked URL, in the new tab, until its load is complete.
+- Google's redirection URLs (`/url?...`) aren't unwrapped.
 
 ## Schemes compatibility table
 | scheme | Firefox | Chrome/ium |
 |---|---|---|
 | http | supported | supported |
 | https | supported | supported |
-| ws | supported | supported since v58 |
-| wss | supported | supported since v58|
-| file | not supported | supported |
+| ws | supported | supported |
+| wss | supported | supported |
+| file | not supported | not supported |
 
 # Additional info
 

@@ -94,7 +94,7 @@
                 _settings.default_action = default_action;
                 _settings.list_action = list_action;
 
-                window.setTimeout(function () {
+                setTimeout(function () {
                     listeners.forEach((l) => l());
                 }, 0);
 
