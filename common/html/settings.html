@@ -8,8 +8,14 @@
   </head>
   <body style="display: none">
     <section>
-      <h1> Default Action </h1>
+      <h1> Actions </h1>
       <form id="settings" autocomplete="off">
+	<h2> Default action </h2>
+	<em> Applied to every URL that doesn't match an entry of the URL list. </em>
+	<label>
+	  <input type="radio" name="default_action" value="2" checked> Open here
+	</label>
+
 	<label>
 	  <input type="radio" name="default_action" value="0"> Open in a disposable qube
 	</label>
@@ -19,11 +25,25 @@
 	</label>
 
 	<label>
-	  <input type="radio" name="default_action" value="3" checked> Block only
+	  <input type="radio" name="default_action" value="3"> Block only
 	</label>
 
-	<label class="dangerous">
-	  <input type="radio" name="default_action" value="2"> Open here
+	<h2> Action for listed URLs </h2>
+	<em> Applied to every URL that matches an entry of the URL list. With "Open here" the list acts as a whitelist, otherwise as a blacklist. </em>
+	<label>
+	  <input type="radio" name="list_action" value="0" checked> Open in a disposable qube
+	</label>
+
+	<label>
+	  <input type="radio" name="list_action" value="1"> Open in the default qube
+	</label>
+
+	<label>
+	  <input type="radio" name="list_action" value="3"> Block only
+	</label>
+
+	<label>
+	  <input type="radio" name="list_action" value="2"> Open here
 	</label>
 
 	<label>
@@ -36,7 +56,7 @@
     </section>
 
     <section>
-      <h1> Whitelist </h1>
+      <h1> URL list </h1>
       <form id="whitelist" autocomplete="off">
 	<em id="type_info"> Remember to escape special RegExp characters with a backslash. Escaping of slash is optional. </em> <br>
 	<h2> Type to add: </h2>
@@ -90,7 +110,7 @@
       </form>
 
       <table class="full" id="whitelist_entries">
-	<caption><b> Whitelist entries </b></caption>
+	<caption><b> URL list entries </b></caption>
 	<thead>
           <tr>
 	    <th> Simple </th>
@@ -123,5 +143,5 @@
     <script src="/common/js/frontend/settings/whitelist_entries.js"></script>
     <script src="/common/js/frontend/settings/whitelist.js"></script>
     <script src="/common/js/frontend/settings/init.js"></script>
-  </body
+  </body>
 </html>

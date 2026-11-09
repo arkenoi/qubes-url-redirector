@@ -1,7 +1,7 @@
 {
     "name": "qvm_open_in_vm",
     "description": "Open in Qube - Native application",
-    "allowed_extensions": ["qubes-url-redirector@raffaeleflorio.github.io"],
+    "allowed_extensions": ["qubes-url-redirector@arkenoi"],
     "type": "stdio",
     "path": "/opt/qubes-url-redirector/qvm-open-in-vm-we.py"
 }

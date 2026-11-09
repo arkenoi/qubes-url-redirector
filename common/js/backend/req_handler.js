@@ -45,7 +45,11 @@ QUR.ready.then(function () {
      */
     const fns = [
         function isDisabled (details) {
-            if (QUR.settings.getDefaultAction() === QUR.settings.ACTION.OPEN_HERE) {
+            /* nothing to do if every URL, listed or not, is opened here */
+            const OPEN_HERE = QUR.settings.ACTION.OPEN_HERE;
+            const defaultOpenHere = QUR.settings.getDefaultAction() === OPEN_HERE;
+            const listOpenHere = QUR.settings.getListAction() === OPEN_HERE || QUR.whitelist.isEmpty();
+            if (defaultOpenHere && listOpenHere) {
                 QUR.tabs.clearBlockedRes(details.tabId);
                 return {cancel: false};
             }
@@ -83,7 +87,10 @@ QUR.ready.then(function () {
         },
         function firewall (details) {
             const {tabId, url} = details;
-            if (QUR.whitelist.isWhitelisted(url)) {
+            const listed = QUR.whitelist.isWhitelisted(url);
+            const action = listed ? QUR.settings.getListAction() : QUR.settings.getDefaultAction();
+
+            if (action === QUR.settings.ACTION.OPEN_HERE) {
                 if (_isTopRequest(details)) {
                     QUR.tabs.clearBlockedRes(tabId);
                 } else {
@@ -92,11 +99,10 @@ QUR.ready.then(function () {
                 return {cancel: false};
             }
 
-            const defaultAction = QUR.settings.getDefaultAction();
             if (_isValidRequestToRedirect(details)) {
 
-                if (_isNativeRequired(defaultAction)) {
-                    const openInDvm = QUR.settings.getDefaultAction() === QUR.settings.ACTION.DVM;
+                if (_isNativeRequired(action)) {
+                    const openInDvm = action === QUR.settings.ACTION.DVM;
                     const vmname = openInDvm === true ? "$dispvm" : QUR.settings.getDefaultVm();
 
                     QUR.native.openurl({vmname, url});

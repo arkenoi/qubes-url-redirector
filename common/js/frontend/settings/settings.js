@@ -24,8 +24,9 @@ OPTIONS.settings = Object.freeze({
         const form = ev.target;
 
         const default_action = Number(form.default_action.value);
+        const list_action = Number(form.list_action.value);
         const default_vm = form.default_vm.value || null;
-        const newSettings = {default_action, default_vm};
+        const newSettings = {default_action, list_action, default_vm};
 
         const MSG = OPTIONS.messaging.MSG;
         const sendMessage = OPTIONS.messaging.sendMessage;
@@ -46,6 +47,7 @@ OPTIONS.settings = Object.freeze({
 
         const form = document.getElementById("settings");
         form.default_action.value = settings.default_action;
+        form.list_action.value = settings.list_action;
         form.default_vm.value = settings.default_vm;
 
     }

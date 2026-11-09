@@ -2,13 +2,13 @@
     "manifest_version": 2,
 
     "name": "Open in Qube",
-    "version": "3.0.1",
+    "version": "3.0.1.1",
     "applications": {
 	"gecko": {
-	    "id": "qubes-url-redirector@raffaeleflorio.github.io"
+	    "id": "qubes-url-redirector@arkenoi"
 	}
     },
-    "description": "Redirect untrusted URLs to another qube while you surf the web!",
+    "description": "Redirect blacklisted URLs to another qube while you surf the web!",
 
     "icons": {
 	"16": "common/logo.png",
@@ -19,7 +19,7 @@
     },
     
     "author": "Raffaele Florio",
-    "homepage_url": "https://github.com/raffaeleflorio/qubes-url-redirector",
+    "homepage_url": "https://github.com/arkenoi/qubes-url-redirector",
 
     "options_ui": {
 	"page": "common/html/settings.html",

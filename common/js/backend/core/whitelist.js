@@ -33,6 +33,7 @@
         toJSON: () => _whitelist.slice(0),
         forEach: (fn) => getCloned().forEach(fn),
         map: (fn) => getCloned().map(fn),
+        isEmpty: () => _whitelist.length === 0,
         isWhitelisted: (value) => _whitelist.some((x) => x.test(value)),
         getMatchedEntry (value) {
             const entry = _whitelist.find((e) => e.test(value));

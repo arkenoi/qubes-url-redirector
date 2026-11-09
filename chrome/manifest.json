@@ -2,9 +2,10 @@
     "manifest_version": 2,
 
     "name": "Open in Qube",
-    "version": "3.0.1",
+    "version": "3.0.1.1",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsQPLj062BiUHv7FAonfwlZHJFtE7Bxx7E25JJASFnA/DTy3DUQWxHzB8+s1hb0IaaYXms47Kmyf/ct+JFK2xYRRALHtQynxZ4FtHx1809nagTjL1neFmpxGBniao7VOLzGptGWMxHfrxRM3+mZrETivTJWzKqkVx9N7ELXDilpT4PSfXDl0sZcDENSP22fOkewYSgXXQhS1GzdkQtFXNSGLcw00eq2Zm8V90khqIalXPELkL/NkSK4Y9F0xCynE5e8G/pru/S2uOzbY/5mZrjt22oJU7ONnDZlA4sRVA2cjsIvCEe51i0uvBOhioahepJwAiRLwQCNmgvO6HAXqChwIDAQAB",
 
-    "description": "Redirect untrusted URLs to another qube while you surf the web!",
+    "description": "Redirect blacklisted URLs to another qube while you surf the web!",
 
     "icons": {
 	"16": "common/logo.png",
@@ -15,7 +16,7 @@
     },
     
     "author": "Raffaele Florio",
-    "homepage_url": "https://github.com/raffaeleflorio/qubes-url-redirector",
+    "homepage_url": "https://github.com/arkenoi/qubes-url-redirector",
 
     "options_ui": {
 	"page": "common/html/settings.html",

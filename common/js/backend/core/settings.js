@@ -27,20 +27,29 @@
         BLOCK_ONLY: 3
     });
 
+    /*
+     * default_action: applied to URLs that don't match any entry of the list
+     * list_action: applied to URLs that match an entry of the list
+     *
+     * By default everything is opened here and the list is a blacklist
+     * whose entries are opened in a disposable qube.
+     * The list acts as a whitelist when list_action is OPEN_HERE.
+     */
     const _settings = {
-        default_action: ACTION.BLOCK_ONLY,
+        default_action: ACTION.OPEN_HERE,
+        list_action: ACTION.DVM,
         default_vm: null
     };
 
     const isValidVmName = (v) => (typeof v === "string" && v !== "") || (v === null);
     const isValidAction = (v) => Object.values(ACTION).some((x) => x === v);
     function isValidSettings (settings) {
-        const {default_action, default_vm} = settings;
-        if (!isValidAction(default_action) || !isValidVmName(default_vm)) {
+        const {default_action, list_action, default_vm} = settings;
+        if (!isValidAction(default_action) || !isValidAction(list_action) || !isValidVmName(default_vm)) {
             return false;
         }
 
-        const requireVmName = default_action === ACTION.DEFAULT_VM;
+        const requireVmName = default_action === ACTION.DEFAULT_VM || list_action === ACTION.DEFAULT_VM;
         /* default_vm could be null */
         if (requireVmName && !default_vm) {
             return false;
@@ -65,6 +74,7 @@
     const publicSettings = Object.freeze({
         ACTION,
         getDefaultAction: () => _settings.default_action,
+        getListAction: () => _settings.list_action,
         getDefaultVm: () => _settings.default_vm,
         toString: () => JSON.stringify(_settings),
         toJSON: () => Object.assign({}, _settings),
@@ -72,7 +82,8 @@
         set (settings) {
             const {default_vm = _settings.default_vm} = settings;
             const {default_action = _settings.default_action} = settings;
-            const newSettings = {default_action, default_vm};
+            const {list_action = _settings.list_action} = settings;
+            const newSettings = {default_action, list_action, default_vm};
 
             if (!isValidSettings(newSettings)) {
                 return Promise.resolve(false);
@@ -81,6 +92,7 @@
             return persist(newSettings).then(function () {
                 _settings.default_vm = default_vm;
                 _settings.default_action = default_action;
+                _settings.list_action = list_action;
 
                 window.setTimeout(function () {
                     listeners.forEach((l) => l());
@@ -94,8 +106,10 @@
     /* initialization of settings */
     browser.storage.local.get("settings")
         .then(function (result) {
-            if (result.settings && isValidSettings(result.settings)) {
-                return result.settings;
+            /* settings saved by an older version lack some properties */
+            const stored = Object.assign({}, _settings, result.settings);
+            if (isValidSettings(stored)) {
+                return stored;
             }
             return _settings;
         })

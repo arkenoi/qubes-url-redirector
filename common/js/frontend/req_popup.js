@@ -55,7 +55,10 @@ const REQ_POPUP = {
         row.querySelector(".url").textContent = res.url;
         row.querySelector(".type").textContent = res.type;
 
-        row.querySelector(".allow").addEventListener("click", function (ev) {
+        if (!REQ_POPUP.LIST_IS_WHITELIST) {
+            row.querySelector(".allow").remove();
+        }
+        row.querySelector(".allow") && row.querySelector(".allow").addEventListener("click", function (ev) {
             const EXACT = 1;
             const MSG_ADD_TO_WHITELIST = {msg: 2};
             const options = {
@@ -90,6 +93,8 @@ const REQ_POPUP = {
 
     browser.tabs.query({active: true, currentWindow: true})
         .then((tab) => REQ_POPUP.TAB_ID = tab[0].id)
+        .then(() => browser.runtime.sendMessage({msg: 1 /* GET_SETTINGS */}))
+        .then((settings) => REQ_POPUP.LIST_IS_WHITELIST = settings.list_action === 2 /* OPEN_HERE */)
         .then(getBlockedRes)
         .then(render)
         .catch(REQ_POPUP.fatal);
