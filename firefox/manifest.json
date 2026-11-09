@@ -3,9 +3,12 @@
 
     "name": "Open in Qube",
     "version": "3.0.1.1",
-    "applications": {
+    "browser_specific_settings": {
 	"gecko": {
-	    "id": "qubes-url-redirector@arkenoi"
+	    "id": "qubes-url-redirector@arkenoi",
+	    "data_collection_permissions": {
+		"required": ["none"]
+	    }
 	}
     },
     "description": "Redirect blacklisted URLs to another qube while you surf the web!",
